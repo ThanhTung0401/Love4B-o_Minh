@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffe3ec">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Gửi em bé 💌</title>
+  <meta name="description" content="Có một bức thư nhỏ đang chờ em bé nè 💌">
+  <meta property="og:title" content="Em bé ơi, có thư nè 💌">
+  <meta property="og:description" content="Mở ra đi mà 🥺👉👈">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@600;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Kho hình vẽ dùng chung: trái tim, hoa hồng, màu gradient -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="gHeart" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ff9dbb"/>
+        <stop offset="1" stop-color="#f43f73"/>
+      </linearGradient>
+      <linearGradient id="gHug" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ff8fb1"/>
+        <stop offset="1" stop-color="#e11d48"/>
+      </linearGradient>
+      <linearGradient id="gWrap" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffb3cb"/>
+        <stop offset="1" stop-color="#f06292"/>
+      </linearGradient>
+      <symbol id="i-heart" viewBox="-12 -12 24 24">
+        <path d="M0,10 C-2,7 -11,2 -11,-4 C-11,-8 -8,-11 -5,-11 C-2.5,-11 -0.8,-9.5 0,-7.5 C0.8,-9.5 2.5,-11 5,-11 C8,-11 11,-8 11,-4 C11,2 2,7 0,10Z"/>
+      </symbol>
+      <g id="rose">
+        <path d="M-25,-6 C-27,13 -13,24 0,24 C13,24 27,13 25,-6 C17,7 -17,7 -25,-6Z" style="fill:var(--r2,#be123c)"/>
+        <circle cy="-5" r="20" style="fill:var(--r1,#e11d48)"/>
+        <path d="M-25,-6 C-31,-17 -21,-29 -8,-26 C-17,-20 -21,-12 -25,-6Z" style="fill:var(--r4,#f43f5e)"/>
+        <path d="M25,-6 C31,-17 21,-29 8,-26 C17,-20 21,-12 25,-6Z" style="fill:var(--r4,#f43f5e)"/>
+        <path d="M0,-5 c3,-3 7,0 5,4 c-2,5 -10,4 -11,-2 c-1,-7 8,-11 14,-7 c7,5 4,15 -4,17 c-9,2 -17,-5 -15,-14" style="fill:none;stroke:var(--r3,#881337)" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M-14,8 C-6,15 6,15 14,8" style="fill:none;stroke:var(--r3,#881337)" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+        <ellipse cx="-8" cy="-16" rx="6" ry="3" fill="#fff" opacity=".3" transform="rotate(-20 -8 -16)"/>
+      </g>
+      <path id="leaf" d="M0 0 C9 -10 9 -27 0 -38 C-9 -27 -9 -10 0 0Z"/>
+    </defs>
+  </svg>
+
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <button class="music-btn" id="musicBtn" type="button" aria-label="Bật hoặc tắt nhạc" aria-pressed="false" hidden><span>♫</span></button>
+
+  <main>
+    <!-- ============ 1. Màn mở đầu ============ -->
+    <section class="screen is-active" id="s-start" aria-label="Mở đầu">
+      <div class="start-wrap">
+        <div class="mascot-holder">
+          <div class="mascot" data-mascot data-mood="normal"></div>
+          <span class="mascot-badge" aria-hidden="true">💌</span>
+        </div>
+        <h1 class="title-script">Em bé ơi!</h1>
+        <p class="lead">Có một bức thư nhỏ đang chờ em nè 💌<br>Nhưng trước khi mở, em trả lời anh vài câu hỏi đã nha 🥺</p>
+        <button class="btn btn-primary btn-big" id="startBtn" type="button">Dạ, bắt đầu nè 💕</button>
+        <p class="hint">bật âm thanh lên cho xịn nha 🎶</p>
+      </div>
+    </section>
+
+    <!-- ============ 2. Màn câu hỏi ============ -->
+    <section class="screen" id="s-quiz" aria-label="Câu hỏi">
+      <div class="quiz-card" id="quizCard">
+        <div class="progress" id="progress" aria-hidden="true"></div>
+        <div class="mascot mascot-sm" data-mascot data-mood="normal" id="quizMascot"></div>
+        <p class="q-count" id="qCount">Câu 1</p>
+        <h2 class="q-text" id="qText"></h2>
+        <div class="q-actions" id="qActions">
+          <button class="btn btn-yes" id="yesBtn" type="button">Có</button>
+          <button class="btn btn-no" id="noBtn" type="button">Không</button>
+        </div>
+        <p class="q-tease" id="qTease" aria-live="polite"></p>
+        <div class="answer" id="answer" hidden>
+          <p class="bubble" id="answerText" aria-live="polite"></p>
+          <button class="btn btn-primary next-btn" id="nextBtn" type="button">Tiếp nè ➜</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. Màn phong thư ============ -->
+    <section class="screen" id="s-envelope" aria-label="Phong thư">
+      <div class="env-stage">
+        <p class="title-script env-title">Thư của em nè 💌</p>
+        <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Chạm để mở thư">
+          <div class="env-back"></div>
+          <div class="env-letter"><span>Gửi em bé ❤</span></div>
+          <div class="env-front"></div>
+          <div class="env-flap"></div>
+          <div class="env-seal"><svg viewBox="-12 -12 24 24"><use href="#i-heart" x="-12" y="-12" width="24" height="24"/></svg></div>
+        </div>
+        <p class="hint hint-pulse">Chạm vào con dấu trái tim để mở thư nha</p>
+      </div>
+    </section>
+
+    <!-- ============ 4. Bức thư ============ -->
+    <section class="screen screen-scroll" id="s-letter" aria-label="Bức thư">
+      <article class="paper">
+        <div class="tape" aria-hidden="true"></div>
+        <svg class="paper-rose" viewBox="-62 -48 124 96" aria-hidden="true">
+          <use href="#leaf" fill="#5aa469" transform="translate(-30 22) rotate(-70)"/>
+          <use href="#leaf" fill="#4d9a5b" transform="translate(30 26) rotate(75)"/>
+          <use href="#rose" transform="translate(-28 8) scale(.78)" style="--r1:#f472b6;--r2:#db2777;--r3:#9d174d;--r4:#f9a8d4"/>
+          <use href="#rose" transform="translate(36 14) scale(.68)" style="--r1:#fb7185;--r2:#e11d48;--r3:#881337;--r4:#fda4af"/>
+          <use href="#rose" transform="translate(4 -6) scale(1)"/>
+        </svg>
+
+        <p class="letter-date reveal" id="letterDate"></p>
+        <h2 class="letter-title" id="letterTitle" aria-label="Gửi em bé đáng yêu, xinh xắn, hay quạu của anh bé ạ!"></h2>
+
+        <div class="letter-body">
+          <p class="reveal">Anh biết là hôm nay em bé khó chịu trong người, tâm trạng và cảm xúc không được vui, không được thoải mái. Một phần là vì em bé đang <span class="hl">tới tháng</span>, phần còn lại là vì anh bé không thể ở gần để ôm em, xoa bụng cho em và làm em bé thoải mái hơn ạ. <span class="hl">Anh thương em bé của anh nhiều lắm luôn ạ.</span> 🥺</p>
+
+          <p class="reveal">Anh bên em được những lúc vui, lúc cười, lúc cùng nhau đùa giỡn, thì tất nhiên anh bé cũng sẽ luôn ở bên em cả những lúc em khó chịu, em không vui hay em quạu ạ. Em bé vui thì anh vui cùng, em bé quạu thì anh... ngồi ngoan cho em quạu nè 🙈. Vì thương một người là thương cả những ngày nắng lẫn những ngày mưa của người đó mà.</p>
+
+          <p class="reveal">Anh biết em bé không thể đổ cảm xúc lên gia đình, vì đó là nơi em bé yêu thương. Em cũng không thể đổ những lúc <em>“không có tâm trạng”</em> lên bạn bè, vì họ không thật sự gần gũi với em và đó cũng là nơi em phải xã giao ạ. Nên anh vui lắm khi em bé có thể để những cảm xúc ấy ở lại với anh. Điều khiến anh yên tâm nhất là khi em được <span class="hl">buông bỏ những gì nặng trĩu trong lòng</span>. Cứ gửi hết cho anh nha, anh giữ giùm em, anh không thấy nặng đâu.</p>
+
+          <p class="reveal">Anh biết đôi khi anh hay làm phiền em bằng những câu như <em>“em ơi”</em>, nhưng nó không đơn giản chỉ là một câu gọi đâu ạ. Đó là một tín hiệu nho nhỏ để em biết rằng <span class="hl">anh vẫn ở đây</span>, anh vẫn đứng sau lưng em bé, đợi em. Anh có bị coi là phiền cũng được, miễn là em vẫn ở bên anh. 👉👈</p>
+
+          <p class="reveal">Hôm nay em bé nhớ giúp anh mấy việc nhỏ xíu nha: uống nước ấm, chườm ấm bụng, ăn gì đó ngọt ngọt cho vui miệng, đắp chăn kín vào và ngủ một giấc thật ngon. Đau quá thì phải nói anh liền, không được chịu một mình đâu đó. Còn nếu em muốn cáu, muốn khóc, hay chỉ muốn im lặng một chút thì cũng không sao hết, anh hiểu mà.</p>
+
+          <p class="reveal">Anh mong mọi thứ xung quanh em bây giờ sẽ đối xử thật nhẹ nhàng với em, bởi vì cô bé của anh hôm nay đã chịu nhiều áp lực rồi ạ. Mong gió thổi nhẹ thôi, mong ai nói chuyện với em cũng dịu dàng thôi, và mong đêm nay em bé có một giấc mơ thật êm. 🌙</p>
+
+          <p class="reveal"><span class="hl">Anh bé yêu thương em, yêu luôn cả cảm xúc của em.</span> Yêu em bé lúc cười tít mắt, yêu cả em bé lúc phụng phịu quạu đeo. Hôm nay, ngày mai, và cả những ngày sau nữa ạ. 💗</p>
+        </div>
+
+        <div class="sign reveal">
+          <p class="sign-love">Anh yêu em bé của anh</p>
+          <div class="vip">
+            <p class="vip-label">✦ THẺ CHỨNG NHẬN ✦</p>
+            <p class="vip-name">TRẦN NGUYỄN BẢO MINH</p>
+            <div class="vip-chips">
+              <span class="chip">🎂 18/07/2006</span>
+              <span class="chip">📏 1m7</span>
+              <span class="chip">⚖️ 58–60kg</span>
+            </div>
+            <span class="vip-badge">CUTE SIÊU CẤP VIP PRO MAX ✨</span>
+          </div>
+        </div>
+      </article>
+
+      <section class="block reveal" aria-label="Bó hoa">
+        <h3 class="block-title">Tặng em bé một bó hồng 🌹</h3>
+        <div class="bouquet">
+          <svg viewBox="0 0 300 360" aria-hidden="true">
+            <g class="bq">
+              <path d="M40 152 Q150 118 260 152 L170 340 L130 340Z" fill="#ffe1ea" stroke="#ffc2d4" stroke-width="2"/>
+
+              <path class="stem" style="--d:.1s" d="M150 320 C150 240 150 150 150 70"/>
+              <path class="stem" style="--d:.2s" d="M150 320 C140 230 110 160 100 100"/>
+              <path class="stem" style="--d:.2s" d="M150 320 C160 230 190 160 200 100"/>
+              <path class="stem" style="--d:.3s" d="M150 320 C142 250 128 190 125 135"/>
+              <path class="stem" style="--d:.3s" d="M150 320 C158 250 172 190 175 135"/>
+              <path class="stem" style="--d:.4s" d="M150 320 C130 250 85 200 70 150"/>
+              <path class="stem" style="--d:.4s" d="M150 320 C170 250 215 200 230 150"/>
+
+              <g transform="translate(96 192) rotate(-55)"><use class="grow" href="#leaf" fill="#5aa469" style="--d:.9s"/></g>
+              <g transform="translate(204 192) rotate(55)"><use class="grow" href="#leaf" fill="#5aa469" style="--d:.95s"/></g>
+              <g transform="translate(66 178) rotate(-85)"><use class="grow" href="#leaf" fill="#4d9a5b" style="--d:1s"/></g>
+              <g transform="translate(234 178) rotate(85)"><use class="grow" href="#leaf" fill="#4d9a5b" style="--d:1.05s"/></g>
+
+              <g fill="#fff" stroke="#ffd1df" stroke-width="1">
+                <g transform="translate(62 116)"><g class="grow" style="--d:1.6s"><circle r="4"/><circle cx="7" cy="-4" r="3"/><circle cx="4" cy="5" r="3"/></g></g>
+                <g transform="translate(238 116)"><g class="grow" style="--d:1.65s"><circle r="4"/><circle cx="-7" cy="-4" r="3"/><circle cx="-4" cy="5" r="3"/></g></g>
+                <g transform="translate(124 52)"><g class="grow" style="--d:1.7s"><circle r="3.5"/><circle cx="-6" cy="4" r="3"/></g></g>
+                <g transform="translate(178 50)"><g class="grow" style="--d:1.75s"><circle r="3.5"/><circle cx="6" cy="4" r="3"/></g></g>
+                <g transform="translate(150 112)"><g class="grow" style="--d:1.8s"><circle r="3.5"/><circle cx="5" cy="5" r="2.5"/></g></g>
+              </g>
+
+              <g transform="translate(70 150) scale(.9)"><g class="bloom" style="--d:1.1s;--r1:#f472b6;--r2:#db2777;--r3:#9d174d;--r4:#f9a8d4"><use href="#rose"/></g></g>
+              <g transform="translate(230 150) scale(.9)"><g class="bloom" style="--d:1.15s;--r1:#f472b6;--r2:#db2777;--r3:#9d174d;--r4:#f9a8d4"><use href="#rose"/></g></g>
+              <g transform="translate(100 100)"><g class="bloom" style="--d:1.2s"><use href="#rose"/></g></g>
+              <g transform="translate(200 100)"><g class="bloom" style="--d:1.25s"><use href="#rose"/></g></g>
+              <g transform="translate(150 70) scale(1.15)"><g class="bloom" style="--d:1.35s;--r1:#fb7185;--r2:#e11d48;--r3:#881337;--r4:#fda4af"><use href="#rose"/></g></g>
+              <g transform="translate(125 138) scale(1.05)"><g class="bloom" style="--d:1.45s;--r1:#f472b6;--r2:#db2777;--r3:#9d174d;--r4:#f9a8d4"><use href="#rose"/></g></g>
+              <g transform="translate(175 138) scale(1.05)"><g class="bloom" style="--d:1.5s"><use href="#rose"/></g></g>
+
+              <path d="M48 170 Q150 206 252 170 L168 342 Q150 350 132 342Z" fill="url(#gWrap)"/>
+              <path d="M102 192 L140 334 M198 192 L160 334" stroke="#fff" stroke-opacity=".35" stroke-width="2" fill="none"/>
+              <path d="M150 282 C118 252 100 290 148 284Z M150 282 C182 252 200 290 152 284Z" fill="#e11d48"/>
+              <path d="M146 285 L130 322 L141 317 L150 288Z M154 285 L170 322 L159 317 L150 288Z" fill="#be123c"/>
+              <circle cx="150" cy="283" r="7" fill="#be123c"/>
+            </g>
+          </svg>
+        </div>
+        <p class="block-sub">Bó hoa này không bao giờ héo, giống như tình cảm anh dành cho em vậy đó 🥰</p>
+      </section>
+
+      <section class="block reveal" aria-label="Phiếu yêu thương">
+        <h3 class="block-title">Phiếu yêu thương 🎟️</h3>
+        <p class="block-sub">Chạm vào phiếu để dùng nha. Không hết hạn, không giới hạn số lần!</p>
+        <div class="coupons" id="coupons"></div>
+        <p class="coupon-note" id="couponNote" aria-live="polite"></p>
+      </section>
+
+      <section class="block block-hug reveal" aria-label="Gửi cái ôm">
+        <h3 class="block-title">Cuối cùng nè...</h3>
+        <button class="hug-btn" id="hugBtn" type="button" aria-label="Gửi anh một cái ôm">
+          <svg viewBox="-12 -12 24 24" aria-hidden="true"><use href="#i-heart" x="-12" y="-12" width="24" height="24" fill="url(#gHug)"/></svg>
+          <span>Ôm anh<br>1 cái</span>
+        </button>
+        <p class="hug-count" id="hugCount" aria-live="polite">Bấm vào trái tim để gửi anh một cái ôm nha 🤗</p>
+      </section>
+
+      <footer class="ps reveal">
+        <p>P/S: Em ơi... 👉👈</p>
+        <p class="ps-small">(anh vẫn ở đây nè)</p>
+        <button class="btn btn-ghost" id="replayBtn" type="button">Đọc lại từ đầu ↺</button>
+      </footer>
+    </section>
+  </main>
+
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
